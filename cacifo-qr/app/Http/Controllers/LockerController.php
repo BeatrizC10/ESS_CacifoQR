@@ -36,7 +36,7 @@ class LockerController extends Controller
             return back()->with('error', 'Cacifo não disponível.');
         }
 
-        Reservation::create([
+        $reservation = Reservation::create([
             'user_id' => Auth::id(),
             'locker_id' => $locker->id,
             'starts_at' => now(),

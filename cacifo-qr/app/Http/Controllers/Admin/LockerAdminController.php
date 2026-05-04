@@ -12,7 +12,11 @@ class LockerAdminController extends Controller
 {
     public function index()
     {
+<<<<<<< Updated upstream
         abort_unless(Auth::check() && Auth::user()?->role === 'admin', 403);
+=======
+        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403);
+>>>>>>> Stashed changes
 
         $lockers = Locker::with([
             'reservations',
@@ -29,6 +33,7 @@ class LockerAdminController extends Controller
         return view('admin.lockers.index', compact('lockers', 'logs'));
     }
 
+<<<<<<< Updated upstream
     public function open(int $id)
     {
         abort_unless(Auth::check() && Auth::user()?->role === 'admin', 403);
@@ -55,6 +60,11 @@ class LockerAdminController extends Controller
     public function close(int $id)
     {
         abort_unless(Auth::check() && Auth::user()?->role === 'admin', 403);
+=======
+    public function close(int $id)
+    {
+        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403);
+>>>>>>> Stashed changes
 
         $locker = Locker::findOrFail($id);
 
@@ -75,9 +85,38 @@ class LockerAdminController extends Controller
             ->with('success', 'Cacifo fechado com sucesso.');
     }
 
+<<<<<<< Updated upstream
     public function reset(int $id)
     {
         abort_unless(Auth::check() && Auth::user()?->role === 'admin', 403);
+=======
+    public function open(int $id)
+    {
+        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403);
+
+        $locker = Locker::findOrFail($id);
+
+        $locker->update([
+            'status' => 'open',
+            'door_open' => true,
+            'open_command' => true,
+        ]);
+
+        LockerLog::create([
+            'locker_id' => $locker->id,
+            'user_id' => Auth::id(),
+            'event' => 'locker_opened',
+            'description' => 'Cacifo aberto manualmente pelo administrador.',
+        ]);
+
+        return redirect()->route('admin.lockers.index')
+            ->with('success', 'Cacifo aberto com sucesso.');
+    }
+
+    public function reset(int $id)
+    {
+        abort_unless(Auth::check() && Auth::user()->isAdmin(), 403);
+>>>>>>> Stashed changes
 
         $locker = Locker::findOrFail($id);
 
