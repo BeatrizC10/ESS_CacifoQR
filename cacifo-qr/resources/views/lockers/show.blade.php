@@ -4,97 +4,154 @@
     <meta charset="UTF-8">
     <title>{{ $locker->name }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f5f7fa;
+            margin: 0;
+        }
+
+        .page {
+            min-height: 100vh;
+        }
+
+        .content {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 40px 20px;
         }
 
         .card {
             background: white;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            width: 460px;
             text-align: center;
-            width: 350px;
-        }
-
-        h1 {
-            margin-bottom: 10px;
         }
 
         .status {
-            margin: 15px 0;
             font-weight: bold;
+            margin: 10px 0 20px;
         }
 
-        .available { color: green; }
-        .reserved { color: orange; }
-        .open { color: blue; }
-        .closed { color: red; }
+        .success {
+            color: green;
+        }
 
-        button {
-            padding: 12px 20px;
+        .error {
+            color: #c62828;
+        }
+
+        button.main-btn {
+            padding: 12px 18px;
             border: none;
-            border-radius: 8px;
-            background: #3490dc;
+            border-radius: 10px;
+            background: #2563eb;
             color: white;
-            font-size: 16px;
             cursor: pointer;
+            font-size: 15px;
         }
 
-        button:hover {
-            background: #2779bd;
+        .qr-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fafafa;
         }
 
-        .msg {
-            margin-top: 15px;
-            font-weight: bold;
+        .small {
+            font-size: 13px;
+            color: #555;
+            word-break: break-all;
         }
 
-        .success { color: green; }
-        .error { color: red; }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
+<div class="page">
+    @include('partials.navbar')
 
-<div class="card">
-    <h1>{{ $locker->name }}</h1>
-    <p>{{ $locker->location }}</p>
+    <div class="content">
+        <div class="card">
+            <h1>{{ $locker->name }}</h1>
+            <p>{{ $locker->location }}</p>
 
-    <div class="status {{ $locker->status }}">
-        Estado: {{ strtoupper($locker->status) }}
+            <div class="status">Estado: {{ strtoupper($locker->status) }}</div>
+
+            @if(session('success'))
+                <p class="success">{{ session('success') }}</p>
+            @endif
+
+            @if(session('error'))
+                <p class="error">{{ session('error') }}</p>
+            @endif
+
+            @auth
+                @if(!$activeReservation && $locker->status === 'available')
+                    <form method="POST" action="{{ route('locker.reserve', $locker->id) }}">
+                        @csrf
+                        <button class="main-btn" type="submit">Gerar QR e reservar cacifo</button>
+                    </form>
+
+                @elseif($activeReservation && $activeReservation->qr_token)
+                    <div class="qr-box">
+                        <h3>QR Code dinâmico</h3>
+
+                        <img
+                            src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data={{ urlencode(route('locker.qr.access', ['token' => $activeReservation->qr_token])) }}"
+                            alt="QR Code do cacifo"
+                        />
+
+                        <p class="small">
+                            {{ route('locker.qr.access', ['token' => $activeReservation->qr_token]) }}
+                        </p>
+
+                        <p class="small">
+                            Válido até: {{ $activeReservation->qr_expires_at?->format('d/m/Y H:i:s') }}
+                        </p>
+
+                        <div class="action-buttons">
+                            <form method="POST" action="{{ route('locker.open', $locker->id) }}">
+                                @csrf
+                                <button class="main-btn" type="submit" style="background:#16a34a;">Abrir cacifo</button>
+                            </form>
+
+                            <form method="POST" action="{{ route('locker.close', $locker->id) }}">
+                                @csrf
+                                <button class="main-btn" type="submit" style="background:#dc2626;">Fechar cacifo</button>
+                            </form>
+                        </div>
+                    </div>
+
+                @elseif($activeReservation)
+                    <p>Existe uma reserva ativa, mas o QR ainda não está disponível.</p>
+
+                @else
+                    <p>Cacifo indisponível.</p>
+                @endif
+            @else
+                <p>Faz login para reservar.</p>
+                <br>
+                <a href="{{ route('login') }}">
+                    <button class="main-btn" type="button">Login</button>
+                </a>
+            @endauth
+        </div>
     </div>
-
-    @auth
-        @if($locker->status === 'available')
-            <form method="POST" action="{{ route('locker.reserve', $locker->id) }}">
-                @csrf
-                <button type="submit">Reservar Cacifo</button>
-            </form>
-        @else
-            <p>Cacifo indisponível</p>
-        @endif
-    @else
-        <p>Faz login para reservar</p>
-        <a href="{{ route('login') }}">
-            <button>Login</button>
-        </a>
-    @endauth
-
-    @if(session('success'))
-        <div class="msg success">{{ session('success') }}</div>
-    @endif
-
-    @if(session('error'))
-        <div class="msg error">{{ session('error') }}</div>
-    @endif
 </div>
-
 </body>
 </html>
