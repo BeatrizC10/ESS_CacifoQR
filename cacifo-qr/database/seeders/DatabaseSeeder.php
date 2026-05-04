@@ -13,14 +13,34 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
+     public function run(): void
     {
-        // User::factory(10)->create();
+        User::updateOrCreate(
+            ['email' => 'admin@test.com'],
+            [
+                'name' => 'Administrador',
+                'password' => bcrypt('123'),
+                'role' => 'admin',
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'user1@test.com'],
+            [
+                'name' => 'Utilizador 1',
+                'password' => bcrypt('123'),
+                'role' => 'user',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'user2@test.com'],
+            [
+                'name' => 'Utilizador 2',
+                'password' => bcrypt('123'),
+                'role' => 'user',
+            ]
+        );
 
         $this->call(LockerSeeder::class);
     }

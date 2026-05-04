@@ -9,12 +9,12 @@
     gap: 12px;
 ">
     <div style="display: flex; gap: 18px; align-items: center; flex-wrap: wrap;">
-        <a href="{{ url('/') }}" style="color: white; text-decoration: none; font-weight: bold; font-size: 18px;">
+        <a href="{{ route('lockers.index') }}" style="color: white; text-decoration: none; font-weight: bold; font-size: 18px;">
             ESS Cacifo QR
         </a>
 
-        <a href="{{ route('locker.show', 1) }}" style="color: #d1d5db; text-decoration: none;">
-            Cacifo
+        <a href="{{ route('lockers.index') }}" style="color: #d1d5db; text-decoration: none;">
+            Home
         </a>
 
         @auth

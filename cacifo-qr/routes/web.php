@@ -5,12 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\LockerAdminController;
 use App\Http\Controllers\LockerController;
 
-Route::get('/', function () {
-    return redirect()->route('locker.show', 1);
-});
+Route::get('/', [LockerController::class, 'index'])->name('lockers.index');
+Route::get('/lockers', [LockerController::class, 'index'])->name('lockers.index');
 
 Route::get('/dashboard', function () {
-    return redirect()->route('locker.show', 1);
+    return redirect()->route('lockers.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/locker/{id}', [LockerController::class, 'show'])->name('locker.show');
@@ -34,9 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/lockers/{id}/open', [LockerAdminController::class, 'open'])->name('admin.lockers.open');
     Route::post('/admin/lockers/{id}/close', [LockerAdminController::class, 'close'])->name('admin.lockers.close');
     Route::post('/admin/lockers/{id}/reset', [LockerAdminController::class, 'reset'])->name('admin.lockers.reset');
-
-    Route::post('/locker/{id}/open', [LockerController::class, 'openFromUser'])->name('locker.open');
-    Route::post('/locker/{id}/close', [LockerController::class, 'closeFromUser'])->name('locker.close');
 });
 
 require __DIR__ . '/auth.php';
