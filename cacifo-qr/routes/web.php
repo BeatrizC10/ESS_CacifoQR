@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\LockerAdminController;
 use App\Http\Controllers\LockerController;
 
 Route::get('/', [LockerController::class, 'index'])->name('lockers.index');
-Route::get('/lockers', [LockerController::class, 'index'])->name('lockers.index');
+Route::get('/lockers', [LockerController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return redirect()->route('lockers.index');
@@ -23,6 +23,19 @@ Route::get('/qr-access/{token}', [LockerController::class, 'qrAccess'])
 
 Route::get('/api/locker/{id}/status', [LockerController::class, 'getStatus']);
 Route::post('/api/locker/{id}/confirm-open', [LockerController::class, 'confirmOpen']);
+
+Route::get('/api/locker/{id}/qr-data', [LockerController::class, 'getQrData'])
+    ->name('locker.qr.data');
+
+Route::post('/locker/{id}/generate-qr', [LockerController::class, 'generateQr'])
+    ->middleware('auth')
+    ->name('locker.generateQr');
+
+Route::post('/locker/{id}/close', [LockerController::class, 'closeLocker'])
+    ->middleware('auth')
+    ->name('locker.close');
+
+Route::get('/api/locker/{id}/qr-data', [LockerController::class, 'getQrData']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

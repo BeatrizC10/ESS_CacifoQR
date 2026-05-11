@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Home dos Cacifos</title>
+    <title>Home - Cacifos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: Arial, sans-serif; background:#eef2f7; margin:0; }
@@ -28,12 +28,18 @@
         a.btn { display:inline-block; margin-top:15px; background:#2563eb; color:white; padding:10px 14px; border-radius:10px; text-decoration:none; }
     </style>
 </head>
+<script>
+    setInterval(function () {
+        window.location.reload();
+    }, 15000);
+</script>
+
 <body>
 @include('partials.navbar')
 
 <div class="container">
     <div class="hero">
-        <h1>Home dos Cacifos</h1>
+        <h1>Home - Cacifos</h1>
         <p>Escolhe um cacifo disponível e efetua a tua reserva com QR dinâmico</p>
     </div>
 

@@ -206,7 +206,7 @@ class LockerController extends Controller
 
             return view('lockers.qr-result', [
                 'success' => false,
-                'message' => 'Este QR Code já foi utilizado. Aguarda a renovação automática.',
+                'message' => 'Este QR Code já foi utilizado. Volta à página do cacifo para gerar um novo QR.',
             ]);
         }
 
@@ -268,6 +268,108 @@ class LockerController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function generateQr(int $id)
+    {
+        $this->syncLockerStatuses();
+
+        $locker = Locker::findOrFail($id);
+
+        $reservation = Reservation::where('locker_id', $locker->id)
+            ->where('user_id', Auth::id())
+            ->where('status', 'active')
+            ->where('starts_at', '<=', now())
+            ->where('ends_at', '>', now())
+            ->latest()
+            ->first();
+
+        if (!$reservation) {
+            return redirect()->route('locker.show', $locker->id)
+                ->with('error', 'Não tens uma reserva ativa para este cacifo.');
+        }
+
+        $reservation->update([
+            'qr_token' => (string) Str::uuid(),
+            'qr_expires_at' => now()->addMinutes(2),
+            'used' => false,
+        ]);
+
+        LockerLog::create([
+            'locker_id' => $locker->id,
+            'user_id' => Auth::id(),
+            'event' => 'qr_generated_manual',
+            'description' => 'QR gerado manualmente pelo utilizador.',
+        ]);
+
+        return redirect()->route('locker.show', $locker->id)
+            ->with('success', 'Novo QR gerado com sucesso.');
+    }
+
+    public function closeLocker(int $id)
+    {
+        $locker = Locker::findOrFail($id);
+
+        $reservation = Reservation::where('locker_id', $locker->id)
+            ->where('user_id', Auth::id())
+            ->where('status', 'active')
+            ->where('starts_at', '<=', now())
+            ->where('ends_at', '>', now())
+            ->latest()
+            ->first();
+
+        if (!$reservation) {
+            return redirect()->route('locker.show', $locker->id)
+                ->with('error', 'Não tens uma reserva ativa para este cacifo.');
+        }
+
+        $locker->update([
+            'status' => 'reserved',
+            'door_open' => false,
+            'open_command' => false,
+        ]);
+
+        $reservation->update([
+            'qr_token' => null,
+            'qr_expires_at' => null,
+            'used' => false,
+        ]);
+
+        LockerLog::create([
+            'locker_id' => $locker->id,
+            'user_id' => Auth::id(),
+            'event' => 'locker_closed_by_user',
+            'description' => 'Cacifo fechado pelo utilizador e QR removido.',
+        ]);
+
+        return redirect()->route('locker.show', $locker->id)
+            ->with('success', 'Cacifo fechado. O QR foi removido.');
+    }
+
+    public function getQrData(int $id)
+    {
+        $locker = Locker::findOrFail($id);
+
+        $reservation = Reservation::where('locker_id', $locker->id)
+            ->where('status', 'active')
+            ->where('starts_at', '<=', now())
+            ->where('ends_at', '>', now())
+            ->latest()
+            ->first();
+
+        if (!$reservation || !$reservation->qr_token) {
+            return response()->json([
+                'has_qr' => false,
+                'qr_url' => null,
+                'qr_token' => null,
+            ]);
+        }
+
+        return response()->json([
+            'has_qr' => true,
+            'qr_url' => url('/qr-access/' . $reservation->qr_token),
+            'qr_token' => $reservation->qr_token,
+        ]);
+    }
+
     private function refreshQrTokenIfNeeded(Reservation $reservation): Reservation
     {
         $now = now();
@@ -296,6 +398,12 @@ class LockerController extends Controller
                 'used' => false,
             ]);
 
+            $reservation->locker?->update([
+                'status' => 'available',
+                'door_open' => false,
+                'open_command' => false,
+            ]);
+
             LockerLog::create([
                 'locker_id' => $reservation->locker_id,
                 'user_id' => $reservation->user_id,
@@ -306,22 +414,7 @@ class LockerController extends Controller
             return $reservation->fresh();
         }
 
-        // Durante a reserva: gerar/renovar QR de 1 em 1 minuto
-        if (!$reservation->qr_expires_at || $now->greaterThanOrEqualTo($reservation->qr_expires_at)) {
-            $reservation->update([
-                'qr_token' => (string) Str::uuid(),
-                'qr_expires_at' => $now->copy()->addMinute(),
-                'used' => false,
-            ]);
-
-            LockerLog::create([
-                'locker_id' => $reservation->locker_id,
-                'user_id' => $reservation->user_id,
-                'event' => 'qr_refreshed',
-                'description' => 'QR renovado automaticamente por mais 1 minuto.',
-            ]);
-        }
-
+        // Durante a reserva: não gerar QR automaticamente
         return $reservation->fresh();
     }
 
