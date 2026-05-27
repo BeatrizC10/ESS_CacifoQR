@@ -1,7 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LockerController;
+use App\Models\Locker;
 
-Route::get('/locker/{id}/status', [LockerController::class, 'getStatus']);
-Route::post('/locker/{id}/confirm-open', [LockerController::class, 'confirmOpen']);
+// Rota pública — não precisa de autenticação
+Route::get('/locker/{id}/status', function (int $id) {
+    $locker = Locker::findOrFail($id);
+    return response()->json([
+        'door_open' => $locker->door_open,
+        'status'    => $locker->status,
+    ]);
+})->withoutMiddleware(['auth:sanctum', 'auth']);
+
+Route::post('/locker/{id}/confirm-open', [App\Http\Controllers\LockerController::class, 'confirmOpen']);

@@ -6,6 +6,7 @@
     <title>{{ $locker->name }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @vite(['resources/js/app.js'])
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -337,8 +338,7 @@
                     title: 'Sucesso!',
                     text: "{{ session('success') }}",
                     timer: 3000,
-                    showConfirmButton: false,
-                    borderRadius: '18px'
+                    showConfirmButton: false
                 });
             @endif
 
@@ -346,8 +346,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: "{{ session('error') }}",
-                    borderRadius: '18px'
+                    text: "{{ session('error') }}"
                 });
             @endif
 
@@ -380,7 +379,7 @@
                         // Recarrega a página para mostrar o novo QR e atualizar a validade
                         window.location.reload();
                     });
-                }, 10000);
+                }, 60000);
             @endif
 
             // 3. Função de confirmação para terminar reserva
@@ -394,8 +393,7 @@
                     cancelButtonColor: '#4b5563',
                     confirmButtonText: 'Sim, terminar!',
                     cancelButtonText: 'Cancelar',
-                    reverseButtons: true,
-                    borderRadius: '18px'
+                    reverseButtons: true
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Feedback visual de "A Processar"
@@ -410,6 +408,12 @@
                         document.getElementById('form-terminar-reserva').submit();
                     }
                 });
+            }
+
+            // ── WebSocket em tempo real (AnyTime AnyWhere) ──────────────────
+            if (typeof window.Echo !== 'undefined') {
+                window.Echo.channel('locker.{{ $locker->id }}')
+                    .listen('.LockerStatusChanged', () => window.location.reload());
             }
         </script>
     @endauth

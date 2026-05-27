@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
+use App\Events\LockerStatusChanged;
+
 class LockerController extends Controller
 {
     public function index()
@@ -295,7 +297,7 @@ class LockerController extends Controller
             'description' => 'QR validado com sucesso. Cacifo aberto.',
         ]);
 
-        broadcast(new LockerOpened($locker->id))->toOthers();
+        broadcast(new LockerStatusChanged($locker->id, 'open'))->toOthers();
 
         return view('lockers.qr-result', [
             'success' => true,
@@ -346,13 +348,16 @@ class LockerController extends Controller
         if ($reservation) {
             $reservation->update([
                 'qr_token' => (string) \Illuminate\Support\Str::uuid(),
-                'qr_expires_at' => now()->addSeconds(10), // Expira em 10s para ser mesmo dinâmico
+                'qr_expires_at' => now()->addSeconds(20), // Expira em 10s para ser mesmo dinâmico
                 'used' => false,
             ]);
         }
 
+        /** @var \Illuminate\Http\Request $request */
+        $request = app(\Illuminate\Http\Request::class);
+
         // Se for um pedido AJAX (do JavaScript), respondemos com JSON
-        if (request()->ajax() || request()->wantsJson()) {
+        if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['success' => true]);
         }
 
@@ -394,6 +399,9 @@ class LockerController extends Controller
             'event' => 'locker_closed_by_user',
             'description' => 'Cacifo fechado pelo utilizador e QR removido.',
         ]);
+
+        broadcast(new LockerStatusChanged($locker->id, 'closed'))->toOthers();
+
 
         return redirect()->route('locker.show', $locker->id)
             ->with('success', 'Cacifo fechado. O QR foi removido.');
