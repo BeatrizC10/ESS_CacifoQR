@@ -84,7 +84,7 @@
     @endif
 
     <div style="margin-bottom: 20px;">
-        <a href="{{ route('lockers.index') }}">Voltar à home dos cacifos</a>
+        <a href="{{ route('lockers.index') }}">Voltar à pagina principal</a>
     </div>
 
     <form method="GET" action="{{ route('admin.lockers.index') }}" style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
@@ -131,8 +131,6 @@
                 </span>
 
                 <p><strong>Porta aberta:</strong> {{ $locker->door_open ? 'Sim' : 'Não' }}</p>
-                <p><strong>Comando de abertura:</strong> {{ $locker->open_command ? 'Sim' : 'Não' }}</p>
-
                 @php
                     $activeReservation = $locker->reservations->where('status', 'active')->sortByDesc('id')->first();
                 @endphp

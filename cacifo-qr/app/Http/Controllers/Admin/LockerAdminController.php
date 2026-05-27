@@ -54,7 +54,6 @@ class LockerAdminController extends Controller
         $locker->update([
             'status' => 'open',
             'door_open' => true,
-            'open_command' => true,
         ]);
 
         LockerLog::create([
@@ -77,7 +76,6 @@ class LockerAdminController extends Controller
         $locker->update([
             'status' => 'closed',
             'door_open' => false,
-            'open_command' => false,
         ]);
 
         LockerLog::create([
@@ -106,7 +104,6 @@ class LockerAdminController extends Controller
         $locker->update([
             'status' => 'available',
             'door_open' => false,
-            'open_command' => false,
         ]);
 
         LockerLog::create([

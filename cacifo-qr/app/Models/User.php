@@ -34,4 +34,9 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function cards()
+    {
+        return $this->hasMany(UserCard::class);
+    }
 }

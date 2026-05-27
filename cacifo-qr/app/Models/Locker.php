@@ -11,12 +11,10 @@ class Locker extends Model
         'location',
         'status',
         'door_open',
-        'open_command',
     ];
 
     protected $casts = [
         'door_open' => 'boolean',
-        'open_command' => 'boolean',
     ];
 
     public function reservations()
@@ -27,5 +25,26 @@ class Locker extends Model
     public function logs()
     {
         return $this->hasMany(LockerLog::class);
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->status === 'available';
+    }
+
+    public function simulateOpen(): void
+    {
+        $this->update([
+            'status' => 'open',
+            'door_open' => true
+        ]);
+    }
+
+    public function simulateClose(): void
+    {
+        $this->update([
+            'status' => 'reserved',
+            'door_open' => false
+        ]);
     }
 }
