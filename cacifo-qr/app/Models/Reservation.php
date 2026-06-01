@@ -16,7 +16,8 @@ class Reservation extends Model
         'qr_token',
         'qr_expires_at',
         'used',
-        'amount_paid',      
+        'alert_sent',
+        'amount_paid',
         'payment_method',
         'payment_status',
     ];
@@ -26,6 +27,7 @@ class Reservation extends Model
         'ends_at' => 'datetime',
         'qr_expires_at' => 'datetime',
         'used' => 'boolean',
+        'alert_sent' => 'boolean',
     ];
 
     public function locker()

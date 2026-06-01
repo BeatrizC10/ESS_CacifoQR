@@ -33,6 +33,13 @@ Route::post('/locker/{id}/close', [LockerController::class, 'closeLocker'])
     ->middleware('auth')
     ->name('locker.close');
 
+Route::get('/lang/{locale}', function (string $locale) {
+    if (in_array($locale, ['pt', 'en'])) {
+        session(['locale' => $locale]);
+    }
+    return redirect()->back();
+})->name('lang.switch');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -49,6 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/wallet/topup', [WalletController::class, 'topUp'])->name('wallet.topup');
     Route::post('/wallet/card/add', [WalletController::class, 'addCard'])->name('wallet.card.add');
     Route::post('/wallet/card/{id}/default', [WalletController::class, 'setDefaultCard'])->name('wallet.card.default');
-});
+
+    });
 
 require __DIR__ . '/auth.php';

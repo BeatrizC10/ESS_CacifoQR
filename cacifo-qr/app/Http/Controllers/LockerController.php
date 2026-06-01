@@ -12,6 +12,9 @@ use Carbon\Carbon;
 
 use App\Events\LockerStatusChanged;
 
+use App\Notifications\ReservationConfirmedNotification;
+use App\Notifications\LockerOpenedNotification;
+
 class LockerController extends Controller
 {
     public function index()
@@ -140,7 +143,7 @@ class LockerController extends Controller
             return back()->with('error', 'Já tens uma reserva ativa nesse período.');
         }
 
-        Reservation::create([
+        $reservation = Reservation::create([
             'user_id' => Auth::id(),
             'locker_id' => $locker->id,
             'starts_at' => $startsAt,
@@ -162,6 +165,11 @@ class LockerController extends Controller
             'event' => 'reservation_created',
             'description' => "Reserva criada de {$startsAt->format('d/m/Y H:i')} até {$endsAt->format('d/m/Y H:i')}.",
         ]);
+
+        $reservation->load('locker');
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $user->notify(new ReservationConfirmedNotification($reservation));
 
         return redirect()->route('locker.show', $locker->id)
             ->with('success', 'Reserva criada com sucesso.');
@@ -296,6 +304,9 @@ class LockerController extends Controller
             'event' => 'reservation_started',
             'description' => 'QR validado com sucesso. Cacifo aberto.',
         ]);
+
+        $reservation->load('locker');
+        $reservation->user->notify(new LockerOpenedNotification($reservation));
 
         broadcast(new LockerStatusChanged($locker->id, 'open'))->toOthers();
 

@@ -3,281 +3,44 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Carteira</title>
+    <title data-pt="Carteira" data-en="Wallet">Carteira</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #eef2f7;
-            margin: 0;
-        }
-
-        .content {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 32px 20px;
-        }
-
-        /* ── Hero ── */
-        .hero {
-            background: linear-gradient(135deg, #1d4ed8, #0f172a);
-            color: white;
-            border-radius: 20px;
-            padding: 28px;
-            margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .hero h1 {
-            margin: 0 0 8px 0;
-            font-size: 30px;
-        }
-
-        .hero p {
-            margin: 0;
-            color: #dbeafe;
-        }
-
-        .balance-bubble {
-            background: rgba(255, 255, 255, 0.12);
-            border: 2px solid rgba(255, 255, 255, 0.25);
-            border-radius: 16px;
-            padding: 16px 28px;
-            text-align: center;
-        }
-
-        .balance-bubble .label {
-            font-size: 12px;
-            color: #bfdbfe;
-            text-transform: uppercase;
-            letter-spacing: .05em;
-        }
-
-        .balance-bubble .amount {
-            font-size: 32px;
-            font-weight: bold;
-            color: #fff;
-            margin-top: 4px;
-        }
-
-        /* ── Grid ── */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            align-items: start;
-        }
-
-        @media (max-width: 900px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ── Panel ── */
-        .panel {
-            background: white;
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .panel h2 {
-            margin: 0;
-            color: #0f172a;
-            font-size: 18px;
-        }
-
-        /* ── Cards de crédito ── */
-        .card-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .credit-card {
-            border-radius: 14px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            border: 2px solid #e5e7eb;
-            transition: border-color .2s;
-        }
-
-        .credit-card.is-default {
-            border-color: #2563eb;
-            background: #eff6ff;
-        }
-
-        .credit-card-info {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .card-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .card-icon.visa {
-            background: #dbeafe;
-        }
-
-        .card-icon.mastercard {
-            background: #fef3c7;
-        }
-
-        .card-details .holder {
-            font-weight: bold;
-            color: #0f172a;
-            font-size: 14px;
-        }
-
-        .card-details .number {
-            color: #6b7280;
-            font-size: 13px;
-            margin-top: 2px;
-        }
-
-        .badge-default {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: bold;
-            background: #dcfce7;
-            color: #166534;
-            white-space: nowrap;
-        }
-
-        .btn-link {
-            background: none;
-            border: none;
-            color: #2563eb;
-            cursor: pointer;
-            font-size: 13px;
-            text-decoration: underline;
-            padding: 0;
-        }
-
-        /* ── Forms ── */
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: bold;
-            color: #374151;
-            margin-bottom: 4px;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            box-sizing: border-box;
-            font-size: 14px;
-            background: #f9fafb;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #2563eb;
-            background: #fff;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .main-btn {
-            padding: 12px 18px;
-            border: none;
-            border-radius: 10px;
-            background: #2563eb;
-            color: white;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 4px;
-        }
-
-        .main-btn:hover {
-            background: #1d4ed8;
-        }
-
-        .main-btn.danger {
-            background: #dc2626;
-        }
-
-        .main-btn.secondary {
-            background: #4b5563;
-        }
-
-        .hint {
-            font-size: 12px;
-            color: #9ca3af;
-            margin-top: 4px;
-        }
-
-        .flash-success {
-            background: #dcfce7;
-            color: #166534;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .flash-error {
-            background: #fee2e2;
-            color: #b91c1c;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .divider {
-            border: none;
-            border-top: 1px solid #e5e7eb;
-            margin: 4px 0;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #9ca3af;
-            font-size: 14px;
-            padding: 20px 0;
-        }
+        body { font-family: Arial, sans-serif; background: #eef2f7; margin: 0; }
+        .content { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+        .hero { background: linear-gradient(135deg, #1d4ed8, #0f172a); color: white; border-radius: 20px; padding: 28px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.12); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+        .hero h1 { margin: 0 0 8px 0; font-size: 30px; }
+        .hero p { margin: 0; color: #dbeafe; }
+        .balance-bubble { background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.25); border-radius: 16px; padding: 16px 28px; text-align: center; }
+        .balance-bubble .label { font-size: 12px; color: #bfdbfe; text-transform: uppercase; letter-spacing: .05em; }
+        .balance-bubble .amount { font-size: 32px; font-weight: bold; color: #fff; margin-top: 4px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+        .panel { background: white; border-radius: 18px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 16px; }
+        .panel h2 { margin: 0; color: #0f172a; font-size: 18px; }
+        .card-list { display: flex; flex-direction: column; gap: 12px; }
+        .credit-card { border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 2px solid #e5e7eb; transition: border-color .2s; }
+        .credit-card.is-default { border-color: #2563eb; background: #eff6ff; }
+        .credit-card-info { display: flex; align-items: center; gap: 14px; }
+        .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .card-icon.visa { background: #dbeafe; }
+        .card-icon.mastercard { background: #fef3c7; }
+        .card-details .holder { font-weight: bold; color: #0f172a; font-size: 14px; }
+        .card-details .number { color: #6b7280; font-size: 13px; margin-top: 2px; }
+        .badge-default { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: bold; background: #dcfce7; color: #166534; white-space: nowrap; }
+        .btn-link { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; text-decoration: underline; padding: 0; }
+        label { display: block; font-size: 13px; font-weight: bold; color: #374151; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #d1d5db; box-sizing: border-box; font-size: 14px; background: #f9fafb; }
+        input:focus, select:focus { outline: none; border-color: #2563eb; background: #fff; }
+        .form-group { display: flex; flex-direction: column; gap: 12px; }
+        .main-btn { padding: 12px 18px; border: none; border-radius: 10px; background: #2563eb; color: white; cursor: pointer; font-size: 15px; font-weight: bold; width: 100%; margin-top: 4px; }
+        .main-btn:hover { background: #1d4ed8; }
+        .hint { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+        .flash-success { background: #dcfce7; color: #166534; border-radius: 10px; padding: 12px 16px; font-weight: bold; font-size: 14px; }
+        .flash-error { background: #fee2e2; color: #b91c1c; border-radius: 10px; padding: 12px 16px; font-weight: bold; font-size: 14px; }
+        .divider { border: none; border-top: 1px solid #e5e7eb; margin: 4px 0; }
+        .empty-state { text-align: center; color: #9ca3af; font-size: 14px; padding: 20px 0; }
     </style>
 </head>
 
@@ -286,19 +49,22 @@
 
     <div class="content">
 
-        {{-- ── Hero com saldo ── --}}
+        {{-- Hero com saldo --}}
         <div class="hero">
             <div>
-                <h1>💳 Carteira</h1>
-                <p>Gere os teus métodos de pagamento e carrega saldo</p>
+                <h1>💳 <span data-pt="Carteira" data-en="Wallet">Carteira</span></h1>
+                <p data-pt="Gere os teus métodos de pagamento e carrega saldo"
+                   data-en="Manage your payment methods and top up balance">
+                    Gere os teus métodos de pagamento e carrega saldo
+                </p>
             </div>
             <div class="balance-bubble">
-                <div class="label">Saldo disponível</div>
+                <div class="label" data-pt="Saldo disponível" data-en="Available balance">Saldo disponível</div>
                 <div class="amount">{{ number_format($user->wallet_balance, 2, ',', '.') }}€</div>
             </div>
         </div>
 
-        {{-- ── Flash messages ── --}}
+        {{-- Flash messages --}}
         @if (session('success'))
             <div class="flash-success" style="margin-bottom: 20px;">✅ {{ session('success') }}</div>
         @endif
@@ -308,15 +74,12 @@
 
         <div class="grid" style="align-items: stretch">
 
-            {{-- ════════════════════════════════════
-                 Coluna esquerda
-                 ════════════════════════════════════ --}}
-
+            {{-- Coluna esquerda --}}
             <div style="display: flex; flex-direction: column; gap: 24px;">
 
-                {{-- ── Carregar saldo ── --}}
+                {{-- Carregar saldo --}}
                 <div class="panel">
-                    <h2>Carregar saldo</h2>
+                    <h2 data-pt="Carregar saldo" data-en="Top up balance">Carregar saldo</h2>
                     <hr class="divider">
 
                     <form method="POST" action="{{ route('wallet.topup') }}">
@@ -324,52 +87,49 @@
                         <div class="form-group">
 
                             <div>
-                                <label for="amount">Montante (€)</label>
+                                <label for="amount" data-pt="Montante (€)" data-en="Amount (€)">Montante (€)</label>
                                 <input type="number" id="amount" name="amount" step="0.01" min="0.01"
                                     placeholder="Ex: 5.00" required>
-                                <p class="hint">Valor mínimo: 0.01€</p>
+                                <p class="hint" data-pt="Valor mínimo: 0.01€" data-en="Minimum value: €0.01">Valor mínimo: 0.01€</p>
                             </div>
 
                             <div>
-                                <label for="method">Método de pagamento</label>
+                                <label for="method" data-pt="Método de pagamento" data-en="Payment method">Método de pagamento</label>
                                 <select id="method" name="method" required onchange="toggleSavedCard(this.value)">
-                                    <option value="">— Selecionar —</option>
+                                    <option value="" data-pt="— Selecionar —" data-en="— Select —">— Selecionar —</option>
                                     <option value="mbway">MB Way</option>
                                     <option value="paypal">PayPal</option>
                                     <option value="visa">VISA</option>
                                     <option value="mastercard">Mastercard</option>
                                     @if ($cards->isNotEmpty())
-                                        <option value="saved_card">💳 Cartão guardado</option>
+                                        <option value="saved_card" data-pt="💳 Cartão guardado" data-en="💳 Saved card">💳 Cartão guardado</option>
                                     @endif
                                 </select>
 
                                 {{-- MB Way --}}
-                                <div id="field-mbway" style="display:none;">
-                                    <label for="mbway_phone">Número de telemóvel</label>
-                                    <input type="tel" id="mbway_phone" name="mbway_phone" placeholder="9XXXXXXXX"
-                                        maxlength="9">
+                                <div id="field-mbway" style="display:none; margin-top:10px;">
+                                    <label for="mbway_phone" data-pt="Número de telemóvel" data-en="Phone number">Número de telemóvel</label>
+                                    <input type="tel" id="mbway_phone" name="mbway_phone" placeholder="9XXXXXXXX" maxlength="9">
                                 </div>
 
                                 {{-- PayPal --}}
-                                <div id="field-paypal" style="display:none;">
-                                    <label for="paypal_email">Email do PayPal</label>
-                                    <input type="email" id="paypal_email" name="paypal_email"
-                                        placeholder="exemplo@email.com">
+                                <div id="field-paypal" style="display:none; margin-top:10px;">
+                                    <label for="paypal_email" data-pt="Email do PayPal" data-en="PayPal email">Email do PayPal</label>
+                                    <input type="email" id="paypal_email" name="paypal_email" placeholder="exemplo@email.com">
                                 </div>
 
                                 {{-- VISA / Mastercard --}}
-                                <div id="field-card" style="display:none;">
-                                    <label for="card_number_topup">Número do cartão</label>
-                                    <input type="text" id="card_number_topup" name="card_number_topup"
-                                        placeholder="16 dígitos" maxlength="16">
+                                <div id="field-card" style="display:none; margin-top:10px;">
+                                    <label for="card_number_topup" data-pt="Número do cartão" data-en="Card number">Número do cartão</label>
+                                    <input type="text" id="card_number_topup" name="card_number_topup" placeholder="16 dígitos" maxlength="16">
                                 </div>
                             </div>
 
-                            {{-- Cartão guardado (visível só se método = saved_card) --}}
+                            {{-- Cartão guardado --}}
                             <div id="saved-card-field" style="display:none;">
-                                <label for="saved_card_id">Escolher cartão</label>
+                                <label for="saved_card_id" data-pt="Escolher cartão" data-en="Choose card">Escolher cartão</label>
                                 <select id="saved_card_id" name="saved_card_id">
-                                    <option value="">— Selecionar cartão —</option>
+                                    <option value="" data-pt="— Selecionar cartão —" data-en="— Select card —">— Selecionar cartão —</option>
                                     @foreach ($cards as $card)
                                         <option value="{{ $card->id }}" {{ $card->is_default ? 'selected' : '' }}>
                                             {{ strtoupper($card->brand) }} ···· {{ $card->last_four }}
@@ -379,27 +139,29 @@
                                 </select>
                             </div>
 
-                            <button class="main-btn" type="submit">Carregar saldo</button>
+                            <button class="main-btn" type="submit"
+                                data-pt="Carregar saldo" data-en="Top up balance">
+                                Carregar saldo
+                            </button>
                         </div>
                     </form>
                 </div>
 
             </div>
 
-            {{-- ════════════════════════════════════
-                 Coluna direita
-                 ════════════════════════════════════ --}}
-
+            {{-- Coluna direita --}}
             <div style="display: flex; flex-direction: column; gap: 24px;">
 
-                {{-- ── Cartões guardados ── --}}
+                {{-- Cartões guardados --}}
                 <div class="panel" style="height: 100%; box-sizing: border-box;">
-                    <h2>Cartões guardados</h2>
+                    <h2 data-pt="Cartões guardados" data-en="Saved cards">Cartões guardados</h2>
                     <hr class="divider">
 
                     @if ($cards->isEmpty())
                         <div class="empty-state">
-                            <p>Ainda não tens cartões guardados.</p>
+                            <p data-pt="Ainda não tens cartões guardados." data-en="You have no saved cards yet.">
+                                Ainda não tens cartões guardados.
+                            </p>
                         </div>
                     @else
                         <div class="card-list">
@@ -407,28 +169,25 @@
                                 <div class="credit-card {{ $card->is_default ? 'is-default' : '' }}">
                                     <div class="credit-card-info">
                                         <div class="card-icon {{ $card->brand }}">
-                                            @if ($card->brand === 'visa')
-                                                💙
-                                            @else
-                                                🟠
-                                            @endif
+                                            @if ($card->brand === 'visa') 💙 @else 🟠 @endif
                                         </div>
                                         <div class="card-details">
                                             <div class="holder">{{ $card->card_holder }}</div>
-                                            <div class="number">
-                                                {{ strtoupper($card->brand) }} ···· {{ $card->last_four }}
-                                            </div>
+                                            <div class="number">{{ strtoupper($card->brand) }} ···· {{ $card->last_four }}</div>
                                         </div>
                                     </div>
 
                                     <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
                                         @if ($card->is_default)
-                                            <span class="badge-default">⭐ Predefinido</span>
+                                            <span class="badge-default"
+                                                data-pt="⭐ Predefinido" data-en="⭐ Default">
+                                                ⭐ Predefinido
+                                            </span>
                                         @else
-                                            <form method="POST"
-                                                action="{{ route('wallet.card.default', $card->id) }}">
+                                            <form method="POST" action="{{ route('wallet.card.default', $card->id) }}">
                                                 @csrf
-                                                <button class="btn-link" type="submit">
+                                                <button class="btn-link" type="submit"
+                                                    data-pt="Definir como padrão" data-en="Set as default">
                                                     Definir como padrão
                                                 </button>
                                             </form>
@@ -441,8 +200,10 @@
                 </div>
             </div>
         </div>
+
+        {{-- Adicionar cartão --}}
         <div class="panel" style="margin-top: 24px">
-            <h2>Adicionar cartão</h2>
+            <h2 data-pt="Adicionar cartão" data-en="Add card">Adicionar cartão</h2>
             <hr class="divider">
 
             <form method="POST" action="{{ route('wallet.card.add') }}">
@@ -450,18 +211,18 @@
                 <div class="form-group">
 
                     <div>
-                        <label for="card_holder">Nome no cartão</label>
-                        <input type="text" id="card_holder" name="card_holder" placeholder="Ex: João Silva"
-                            value="{{ old('card_holder') }}" required>
+                        <label for="card_holder" data-pt="Nome no cartão" data-en="Cardholder name">Nome no cartão</label>
+                        <input type="text" id="card_holder" name="card_holder"
+                            placeholder="Ex: João Silva" value="{{ old('card_holder') }}" required>
                         @error('card_holder')
                             <p class="hint" style="color:#b91c1c;">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="brand">Tipo</label>
+                        <label for="brand" data-pt="Tipo" data-en="Type">Tipo</label>
                         <select id="brand" name="brand" required onchange="toggleAddCardFields(this.value)">
-                            <option value="">— Selecionar —</option>
+                            <option value="" data-pt="— Selecionar —" data-en="— Select —">— Selecionar —</option>
                             <option value="visa">VISA</option>
                             <option value="mastercard">Mastercard</option>
                             <option value="mbway">MB Way</option>
@@ -469,69 +230,53 @@
                         </select>
                     </div>
 
-                    {{-- Campos para cartão --}}
                     <div id="add-card-fields" style="display:none;">
-                        <label>Número do cartão</label>
+                        <label data-pt="Número do cartão" data-en="Card number">Número do cartão</label>
                         <input type="text" name="card_number" placeholder="16 dígitos" maxlength="16">
                     </div>
 
-                    {{-- Campo MB Way --}}
                     <div id="add-mbway-field" style="display:none;">
-                        <label>Número de telemóvel</label>
+                        <label data-pt="Número de telemóvel" data-en="Phone number">Número de telemóvel</label>
                         <input type="tel" name="mbway_phone" placeholder="9XXXXXXXX" maxlength="9">
                     </div>
 
-                    {{-- Campo PayPal --}}
                     <div id="add-paypal-field" style="display:none;">
-                        <label>Email do PayPal</label>
+                        <label data-pt="Email do PayPal" data-en="PayPal email">Email do PayPal</label>
                         <input type="email" name="paypal_email" placeholder="exemplo@email.com">
                     </div>
 
-                    <button class="main-btn" type="submit">Guardar cartão</button>
+                    <button class="main-btn" type="submit"
+                        data-pt="Guardar cartão" data-en="Save card">
+                        Guardar cartão
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-
-
-    {{-- ── Scripts ── --}}
     <script>
-        // Mostra/esconde o seletor de cartão guardado conforme o método escolhido
         function toggleSavedCard(value) {
-            const field = document.getElementById('saved-card-field');
-            const select = document.getElementById('saved_card_id');
-
             document.getElementById('saved-card-field').style.display = 'none';
             document.getElementById('field-mbway').style.display = 'none';
             document.getElementById('field-paypal').style.display = 'none';
             document.getElementById('field-card').style.display = 'none';
 
-            if (value === 'saved_card') {
-                document.getElementById('saved-card-field').style.display = 'block';
-            } else if (value === 'mbway') {
-                document.getElementById('field-mbway').style.display = 'block';
-            } else if (value === 'paypal') {
-                document.getElementById('field-paypal').style.display = 'block';
-            } else if (value === 'visa' || value === 'mastercard') {
-                document.getElementById('field-card').style.display = 'block';
-            }
+            if (value === 'saved_card')   document.getElementById('saved-card-field').style.display = 'block';
+            else if (value === 'mbway')   document.getElementById('field-mbway').style.display = 'block';
+            else if (value === 'paypal')  document.getElementById('field-paypal').style.display = 'block';
+            else if (value === 'visa' || value === 'mastercard') document.getElementById('field-card').style.display = 'block';
         }
 
         function toggleAddCardFields(value) {
-            document.getElementById('add-card-fields').style.display =
-                (value === 'visa' || value === 'mastercard') ? 'block' : 'none';
-            document.getElementById('add-mbway-field').style.display =
-                value === 'mbway' ? 'block' : 'none';
-            document.getElementById('add-paypal-field').style.display =
-                value === 'paypal' ? 'block' : 'none';
+            document.getElementById('add-card-fields').style.display  = (value === 'visa' || value === 'mastercard') ? 'block' : 'none';
+            document.getElementById('add-mbway-field').style.display  = value === 'mbway'   ? 'block' : 'none';
+            document.getElementById('add-paypal-field').style.display = value === 'paypal'  ? 'block' : 'none';
         }
 
-        // SweetAlert para flash messages
         @if (session('success'))
             Swal.fire({
                 icon: 'success',
-                title: 'Sucesso!',
+                title: localStorage.getItem('lang') === 'en' ? 'Success!' : 'Sucesso!',
                 text: "{{ session('success') }}",
                 timer: 3000,
                 showConfirmButton: false,
@@ -541,7 +286,7 @@
         @if (session('error'))
             Swal.fire({
                 icon: 'error',
-                title: 'Erro!',
+                title: localStorage.getItem('lang') === 'en' ? 'Error!' : 'Erro!',
                 text: "{{ session('error') }}",
             });
         @endif
