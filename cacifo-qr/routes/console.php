@@ -11,3 +11,5 @@ Artisan::command('inspire', function () {
 
 // Verifica reservas a expirar a cada minuto
 Schedule::command('reservations:send-expiring-alerts')->everyMinute();
+
+Schedule::command('reservations:send-expired-alerts')->everyMinute();
