@@ -8,6 +8,37 @@ use App\Models\UserCard;
 
 class WalletController extends Controller
 {
+    public function editCard(Request $request, int $id)
+    {
+        $user = Auth::user();
+        $card = UserCard::where('user_id', $user->id)->findOrFail($id);
+
+        $card->update([
+            'card_holder'  => $request->card_holder,
+            'last_four'    => $request->last_four ?: $card->last_four,
+            'mbway_phone'  => $request->mbway_phone ?: $card->mbway_phone,
+            'paypal_email' => $request->paypal_email ?: $card->paypal_email,
+        ]);
+
+        return back()->with('success', 'Cartão atualizado com sucesso!');
+    }
+
+    public function deleteCard(int $id)
+    {
+        $user = Auth::user();
+        $card = UserCard::where('user_id', $user->id)->findOrFail($id);
+        $wasDefault = $card->is_default;
+        $card->delete();
+
+        // Se era o predefinido, define o próximo como predefinido
+        if ($wasDefault) {
+            $next = UserCard::where('user_id', $user->id)->first();
+            if ($next) $next->update(['is_default' => true]);
+        }
+
+        return back()->with('success', 'Cartão eliminado com sucesso!');
+    }
+
     public function index()
     {
         /** @var \App\Models\User $user */

@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('locker.show', 1));
+	return redirect()->intended(route('lockers.index'));
     }
 
     /**

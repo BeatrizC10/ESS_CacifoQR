@@ -1,18 +1,10 @@
 <section class="space-y-6">
-    <header>
-        <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Delete Account') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
-        </p>
-    </header>
-
     <x-danger-button
         x-data=""
         x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Delete Account') }}</x-danger-button>
+    >
+        <span class="delete-btn-text">{{ app()->getLocale() === 'en' ? 'Delete Account' : 'Eliminar Conta' }}</span>
+    </x-danger-button>
 
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
         <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
@@ -20,34 +12,30 @@
             @method('delete')
 
             <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Are you sure you want to delete your account?') }}
+                {{ app()->getLocale() === 'en' ? 'Are you sure you want to delete your account?' : 'Tem a certeza que pretende eliminar a conta?' }}
             </h2>
-
             <p class="mt-1 text-sm text-gray-600">
-                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+                {{ app()->getLocale() === 'en' ? 'Once your account is deleted, all data will be permanently removed. Please enter your password to confirm.' : 'Uma vez que a sua conta é apagada, todos os dados são permanentemente apagados. Por favor, introduza a sua palavra-passe para confirmar.' }}
             </p>
 
             <div class="mt-6">
-                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
-
+                <x-input-label for="password" value="{{ app()->getLocale() === 'en' ? 'Password' : 'Palavra-passe' }}" class="sr-only" />
                 <x-text-input
                     id="password"
                     name="password"
                     type="password"
                     class="mt-1 block w-3/4"
-                    placeholder="{{ __('Password') }}"
+                    placeholder="{{ app()->getLocale() === 'en' ? 'Password' : 'Palavra-passe' }}"
                 />
-
                 <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
             </div>
 
             <div class="mt-6 flex justify-end">
                 <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
+                    {{ app()->getLocale() === 'en' ? 'Cancel' : 'Cancelar' }}
                 </x-secondary-button>
-
                 <x-danger-button class="ms-3">
-                    {{ __('Delete Account') }}
+                    {{ app()->getLocale() === 'en' ? 'Delete Account' : 'Eliminar Conta' }}
                 </x-danger-button>
             </div>
         </form>

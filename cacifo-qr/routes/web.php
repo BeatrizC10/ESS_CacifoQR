@@ -56,6 +56,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/wallet/topup', [WalletController::class, 'topUp'])->name('wallet.topup');
     Route::post('/wallet/card/add', [WalletController::class, 'addCard'])->name('wallet.card.add');
     Route::post('/wallet/card/{id}/default', [WalletController::class, 'setDefaultCard'])->name('wallet.card.default');
+    Route::delete('/wallet/card/{id}/delete', [WalletController::class, 'deleteCard'])->name('wallet.card.delete');
+Route::patch('/wallet/card/{id}/edit', [WalletController::class, 'editCard'])->name('wallet.card.edit');
 
     });
 

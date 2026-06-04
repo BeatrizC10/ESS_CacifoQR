@@ -29,7 +29,7 @@
         .card-details .holder { font-weight: bold; color: #0f172a; font-size: 14px; }
         .card-details .number { color: #6b7280; font-size: 13px; margin-top: 2px; }
         .badge-default { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: bold; background: #dcfce7; color: #166534; white-space: nowrap; }
-        .btn-link { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; text-decoration: underline; padding: 0; }
+	.btn-link { background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; text-decoration: none; padding: 0; }
         label { display: block; font-size: 13px; font-weight: bold; color: #374151; margin-bottom: 4px; }
         input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #d1d5db; box-sizing: border-box; font-size: 14px; background: #f9fafb; }
         input:focus, select:focus { outline: none; border-color: #2563eb; background: #fff; }
@@ -177,7 +177,7 @@
                                         </div>
                                     </div>
 
-                                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+                                    <div style="display:flex; flex-direction:row; align-items:flex-end; gap:8px;">
                                         @if ($card->is_default)
                                             <span class="badge-default"
                                                 data-pt="⭐ Predefinido" data-en="⭐ Default">
@@ -186,12 +186,40 @@
                                         @else
                                             <form method="POST" action="{{ route('wallet.card.default', $card->id) }}">
                                                 @csrf
-                                                <button class="btn-link" type="submit"
-                                                    data-pt="Definir como padrão" data-en="Set as default">
-                                                    Definir como padrão
-                                                </button>
+						<button class="btn-link" type="submit"
+                                                style="font-size:18px; padding:4px;"
+                                                title="Definir como padrão"
+                                                data-pt="Definir como padrão" data-en="Set as default">
+                                                ⭐
+                                            </button>
                                             </form>
                                         @endif
+<form method="POST" action="{{ route('wallet.card.edit', $card->id) }}"
+                                        id="edit-form-{{ $card->id }}">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" id="edit-holder-{{ $card->id }}" name="card_holder" value="{{ $card->card_holder }}">
+                                        <input type="hidden" id="edit-last-four-{{ $card->id }}" name="last_four" value="{{ $card->last_four }}">
+                                        <input type="hidden" id="edit-mbway-{{ $card->id }}" name="mbway_phone" value="{{ $card->mbway_phone }}">
+                                        <input type="hidden" id="edit-paypal-{{ $card->id }}" name="paypal_email" value="{{ $card->paypal_email }}">
+                                        <button type="button"
+                                            onclick="editCard({{ $card->id }}, '{{ $card->card_holder }}', '{{ $card->brand }}', '{{ $card->last_four }}', '{{ $card->mbway_phone }}', '{{ $card->paypal_email }}')"
+                                            style="background:none; border:none; cursor:pointer; color:#2563eb; font-size:18px; padding:4px;"
+                                            title="Editar cartão">
+                                            ✏️
+                                        </button>
+                                    </form>
+					<form method="POST" action="{{ route('wallet.card.delete', $card->id) }}"
+                                       		id="delete-form-{{ $card->id }}">
+                                        	@csrf
+                                        	@method('DELETE')
+                                        	<button type="button"
+                                        		onclick="confirmDelete({{ $card->id }})"
+                                            		style="background:none; border:none; cursor:pointer; color:#dc2626; font-size:18px; padding:4px;"
+                                            		title="Eliminar cartão">
+                                            		🗑️
+                                        	</button>
+                                    	</form>
                                     </div>
                                 </div>
                             @endforeach
@@ -255,6 +283,91 @@
     </div>
 
     <script>
+        function editCard(id, holder, brand, lastFour, mbwayPhone, paypalEmail) {
+            let extraField = '';
+            if (brand === 'visa' || brand === 'mastercard') {
+                extraField = `<div style="margin-top:10px;">
+                    <label style="font-size:13px;font-weight:bold;">Confirmar últimos 4 dígitos atuais</label>
+                    <input id="swal-confirm-four" class="swal2-input" maxlength="4" placeholder="XXXX">
+                    <p style="font-size:11px;color:#6b7280;margin-top:4px;">Por segurança, confirma os últimos 4 dígitos do cartão atual.</p>
+                    <div id="swal-confirm-error" style="color:#dc2626;font-size:12px;display:none;margin-top:4px;">❌ Dígitos incorretos!</div>
+                </div>
+                <div style="margin-top:10px;">
+                    <label style="font-size:13px;font-weight:bold;">Novo número do cartão (16 dígitos)</label>
+                    <input id="swal-new-card" class="swal2-input" maxlength="16" placeholder="XXXXXXXXXXXXXXXX">
+                </div>`;
+            } else if (brand === 'mbway') {
+                extraField = `<div style="margin-top:10px;">
+                    <label style="font-size:13px;font-weight:bold;">Número de telemóvel</label>
+                    <input id="swal-mbway" class="swal2-input" maxlength="9" placeholder="9XXXXXXXX" value="${mbwayPhone}">
+                </div>`;
+            } else if (brand === 'paypal') {
+                extraField = `<div style="margin-top:10px;">
+                    <label style="font-size:13px;font-weight:bold;">Email do PayPal</label>
+                    <input id="swal-paypal" class="swal2-input" type="email" placeholder="exemplo@email.com" value="${paypalEmail}">
+                </div>`;
+            }
+
+            Swal.fire({
+                title: 'Editar cartão',
+                html: `
+                    <div style="text-align:left;">
+                        <label style="font-size:13px;font-weight:bold;">Nome no cartão</label>
+                        <input id="swal-holder" class="swal2-input" placeholder="Nome" value="${holder}">
+                        ${extraField}
+                    </div>`,
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    if (brand === 'visa' || brand === 'mastercard') {
+                        const confirmFour = document.getElementById('swal-confirm-four').value;
+                        const newCard = document.getElementById('swal-new-card').value;
+                        if (confirmFour !== lastFour) {
+                            document.getElementById('swal-confirm-error').style.display = 'block';
+                            return false;
+                        }
+                        if (newCard.length !== 16) {
+                            Swal.showValidationMessage('O novo número deve ter 16 dígitos!');
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('edit-holder-' + id).value = document.getElementById('swal-holder').value;
+                    if (brand === 'visa' || brand === 'mastercard') {
+                        const newCard = document.getElementById('swal-new-card').value;
+                        document.getElementById('edit-last-four-' + id).value = newCard.slice(-4);
+                    } else if (brand === 'mbway') {
+                        document.getElementById('edit-mbway-' + id).value = document.getElementById('swal-mbway').value;
+                    } else if (brand === 'paypal') {
+                        document.getElementById('edit-paypal-' + id).value = document.getElementById('swal-paypal').value;
+                    }
+                    document.getElementById('edit-form-' + id).submit();
+                }
+            });
+        }
+	function confirmDelete(id) {
+            Swal.fire({
+                title: 'Eliminar cartão?',
+                text: 'Tens a certeza que queres eliminar este cartão?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sim, eliminar!',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            });
+        }
+
         function toggleSavedCard(value) {
             document.getElementById('saved-card-field').style.display = 'none';
             document.getElementById('field-mbway').style.display = 'none';
